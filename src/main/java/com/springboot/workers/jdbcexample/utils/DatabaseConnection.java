@@ -1,0 +1,41 @@
+package com.springboot.workers.jdbcexample.utils;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DatabaseConnection {
+
+	private Connection connection = null;
+
+	DatabaseConnection(
+		@Value("${db.url}") String url,
+		@Value("${db.username}") String username,
+		@Value("${db.password}") String password ) throws SQLException {
+		super();
+		this.connection = DriverManager.getConnection(url,username,password);
+	}
+	
+	@PostConstruct
+	public void init() throws SQLException {
+		printConnectionDetails();
+	}
+
+	@SuppressWarnings("unused")
+	private void printConnectionDetails() throws SQLException {		
+		System.out.println("Connected to database server" + 
+		this.connection.getMetaData().getDatabaseProductName() + "version : " 
+		+ this.connection.getMetaData().getDatabaseProductVersion());
+	}
+	
+	public Connection getConnection() {
+		return connection;
+	}
+	
+}
